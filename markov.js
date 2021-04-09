@@ -1,3 +1,5 @@
+"use strict";
+
 /** Textual markov chain generator */
 
 
@@ -7,7 +9,7 @@ class MarkovMachine {
 
   constructor(text) {
     this.words = text.split(/[ \r\n]+/); // ["the", "cat", "in", "the", "hat"]
-    this.chains = this.makeChains(this.words);
+    this.makeChains();
   }
 
   /** set markov chains:
@@ -15,40 +17,50 @@ class MarkovMachine {
    *  for text of "the cat in the hat", chains will be
    *  {"the": ["cat", "hat"], "cat": ["in"], "in": ["the"], "hat": [null]} */
 
-  makeChains(words) {
-    let chains = {};
+  makeChains() {
+    let chains = new Map();
 
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      const nextWord = words[i + 1] ? words[i + 1] : null;
-      if (!(word in chains)) {
-        chains[word] = [];
+    for (let i = 0; i < this.words.length; i++) {
+      const word = this.words[i];
+      const nextWord = this.words[i + 1] || null;
+      if (!(chains.has(word))) {
+        chains.set(word, []);
       }
-      chains[word].push(nextWord);
+      chains.get(word).push(nextWord);
     }
 
-    return chains;
+    this.chains = chains;
   }
 
+  /** return a random value from array */
+
+  static choice(arr){
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
 
   /** return random text from chains */
 
   getText(numWords = 100) {
-    let randomIdx = Math.floor(Math.random() * this.words.length);
-    let word = this.words[randomIdx];
-    let text = word;
-    let count = 1;
+    let keys = Array.from(this.chains.keys());
+    let key = MarkovMachine.choice(keys);
+    let randomWords = [];
 
-    while (count < numWords){
-      let nextWordOptions = this.chains[word];
-      randomIdx = Math.floor(Math.random() * nextWordOptions.length);
-      word = nextWordOptions[randomIdx];
-      if (word === null) break;
-      text += ' '+word;
-      count++;
+    while (randomWords.length < numWords && key !== null){
+      const { word, nextKey } = this._getNextLink(key);
+      randomWords.push(word);
+      key = nextKey;
     }
 
-    return text;
+    return randomWords.join(' ');
+  }
+
+  /** Get next word and next key */
+
+  _getNextLink(key){
+    return {
+      word: key,
+      nextKey: MarkovMachine.choice(this.chains.get(key)),
+    };
   }
 }
 
