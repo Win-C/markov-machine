@@ -1,0 +1,24 @@
+{
+  "name": "node-markov",
+  "version": "1.0.0",
+  "description": "",
+  "main": "makeText.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "follow-redirects": "^1.13.3"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Win-C/markov-machine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Win-C/markov-machine/issues"
+  },
+  "homepage": "https://github.com/Win-C/markov-machine#readme"
+}
